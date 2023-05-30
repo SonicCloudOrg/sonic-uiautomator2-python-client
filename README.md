@@ -16,4 +16,4 @@ coming soon...
 - [xsoloking/appium-uiautomator2-client](https://github.com/xsoloking/appium-uiautomator2-client)
 
 ### LICENSE
-![LICENSE](LICENSE)
+[LICENSE](LICENSE)
