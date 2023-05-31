@@ -1,4 +1,13 @@
-# sonic-uiautomator2-python-client
+<p align="center">
+  <img width="80px" src="https://raw.githubusercontent.com/SonicCloudOrg/sonic-server/main/logo.png">
+</p>
+<p align="center">🎉The Python Client of appium-uiautomator2-server</p>
+<p align="center">
+  <span>English |</span>
+  <a href="https://github.com/SonicCloudOrg/sonic-uiautomator2-python-client/blob/main/README_CN.md">  
+     简体中文
+  </a>
+</p>
 
 ### Background
 
