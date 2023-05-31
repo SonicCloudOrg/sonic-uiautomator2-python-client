@@ -1,4 +1,14 @@
-# sonic-uiautomator2-python-client
+<p align="center">
+  <img width="80px" src="https://raw.githubusercontent.com/SonicCloudOrg/sonic-server/main/logo.png">
+</p>
+<p align="center">🎉appium-uiautomator2-server的Python客户端</p>
+<p align="center">
+ <a href="https://github.com/SonicCloudOrg/sonic-uiautomator2-python-client/blob/main/README.md">  
+    English
+  </a>
+  <span>| 简体中文</span>
+</p>
+
 
 ### 背景
 
