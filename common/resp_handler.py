@@ -1,12 +1,6 @@
 # !/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-# @Author: 花菜
-# @File: resp_handler.py
-# @Time : 2023/6/1 16:09
-# @Email: lihuacai168@gmail.com
-
-
 import json
 from typing import Any, Dict, Optional, Union
 

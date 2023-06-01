@@ -1,12 +1,6 @@
 # !/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-# @Author: 花菜
-# @File: android_element.py
-# @Time : 2023/6/1 17:14
-# @Email: lihuacai168@gmail.com
-
-
 import base64
 import json
 from abc import abstractmethod
