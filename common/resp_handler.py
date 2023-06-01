@@ -24,7 +24,7 @@ class RespHandler:
         timeout = timeout if timeout is not None else self.request_timeout
         try:
             response = http_request.send(timeout=timeout)
-            return self.init_resp(response.text)
+            return self.init_resp(response)
         except (HTTPError, requests.exceptions.RequestException) as e:
             print(e)
             raise Exception(e)

@@ -1,11 +1,6 @@
 # !/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-# @Author: 花菜
-# @File: models.py
-# @Time : 2023/6/1 16:16
-# @Email: lihuacai168@gmail.com
-
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Optional

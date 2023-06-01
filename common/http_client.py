@@ -1,10 +1,6 @@
 # !/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-# @Author: 花菜
-# @File: http_client.py
-# @Time : 2023/6/1 16:44
-# @Email: lihuacai168@gmail.com
 import json
 
 import requests

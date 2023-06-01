@@ -8,15 +8,13 @@ from client.android_element import AndroidElement, AndroidElementImpl
 from common.http_client import HttpUtil
 from common.logger import Logger
 from common.resp_handler import RespHandler
-from exceptions.sonic_resp_exception import SonicRespException
+from common.sonic_exception import SonicRespException
 from models import BaseResp, Method, SessionInfo, WindowSize
-
-DEFAULT_REQUEST_TIMEOUT = 15000
 
 # Client of uiautomator2 server, see https://github.com/appium/appium-uiautomator2-server
 
 
-class UiaClientImpl:
+class UiaClient:
     LEGACY_WEB_ELEMENT_IDENTIFIER = "ELEMENT"
     WEB_ELEMENT_IDENTIFIER = "element-6066-11e4-a52e-4f735466cecf"
     FIND_ELEMENT_INTERVAL = 3000
@@ -29,16 +27,16 @@ class UiaClientImpl:
         self.logger = Logger()
         self.size = None
 
-    def check_bundle_id(self, bundleId: str):
-        if not bundleId:
+    def check_bundle_id(self, bundle_id: str):
+        if not bundle_id:
             self.logger.error("bundleId not found.")
             raise SonicRespException("bundleId not found.")
 
     def parse_element_id(self, o: Any) -> str:
-        jsonObject = json.loads(o)
+        json_object = json.loads(o)
         identifier = [self.LEGACY_WEB_ELEMENT_IDENTIFIER, self.WEB_ELEMENT_IDENTIFIER]
         for i in identifier:
-            result = jsonObject.get(i, "")
+            result = json_object.get(i, "")
             if result:
                 return result
         return ""
@@ -48,7 +46,7 @@ class UiaClientImpl:
         b: BaseResp = self.resp_handler.get_resp(
             HttpUtil.create_post(self.remote_url + "/session").body(json.dumps(data))
         )
-        if b.get_err() is None:
+        if b.err is None:
             # TODO parse session id
             sessionInfo = SessionInfo.parse(b)
             self.session_id = sessionInfo.get_session_id()
@@ -56,8 +54,8 @@ class UiaClientImpl:
             self.logger.info("session : %s", self.session_id)
         else:
             self.logger.error("start session failed.")
-            self.logger.error("cause: %s", b.get_err().get_message())
-            raise SonicRespException(b.get_err().get_message())
+            self.logger.error("cause: %s", b.err.message)
+            raise SonicRespException(b.err.message)
 
     def close_session(self):
         self.check_session_id()
