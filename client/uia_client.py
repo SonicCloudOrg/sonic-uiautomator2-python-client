@@ -56,9 +56,9 @@ class UiaClient:
         )
         if b.err is None:
             # TODO parse session id
-            # sessionInfo = SessionInfo.parse(b.value)
-            # self.session_id = sessionInfo.get_session_id()
-            self.session_id = b.session_id
+            sessionInfo = SessionInfo.parse(b.value)
+            self.session_id = sessionInfo.get_session_id()
+            # self.session_id = b.session_id
             self.logger.info("start session successful!")
             self.logger.info("session : %s", self.session_id)
         else:
