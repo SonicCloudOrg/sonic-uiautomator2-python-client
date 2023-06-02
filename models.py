@@ -1,8 +1,8 @@
 # !/usr/bin/python3
 # -*- coding: utf-8 -*-
-
+import json
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 from typing import Any, Optional
 
 
@@ -12,6 +12,10 @@ class ErrorMsg:
     message: str
     traceback: str
 
+    @staticmethod
+    def get_message():
+        return ErrorMsg.message
+
 
 @dataclass
 class BaseResp:
@@ -19,8 +23,19 @@ class BaseResp:
     err: Optional[ErrorMsg] = None
     value: Any = None
 
+    @staticmethod
+    def get_err():
+        return BaseResp.err
 
-class Method(Enum):
+    @staticmethod
+    def get_value():
+        return BaseResp.value
+
+    @staticmethod
+    def get_session_id():
+        return BaseResp.session_id
+
+class Method(StrEnum):
     GET = "GET"
     POST = "POST"
     PUT = "PUT"
