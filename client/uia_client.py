@@ -54,7 +54,7 @@ class UiaClient:
         b: BaseResp = self.resp_handler.get_resp(
             HttpUtil.create_post(self.remote_url + "/session").body(json.dumps(data))
         )
-        if b.err is None:
+        if b.get_err() is None:
             # TODO parse session id
             sessionInfo = SessionInfo.parse(b.value)
             self.session_id = sessionInfo.get_session_id()
@@ -63,8 +63,8 @@ class UiaClient:
             self.logger.info("session : %s", self.session_id)
         else:
             self.logger.error("start session failed.")
-            self.logger.error("cause: %s", b.err.message)
-            raise SonicRespException(b.err.message)
+            self.logger.error("cause: %s", b.get_err().get_message())
+            raise SonicRespException(b.get_err().get_message())
 
     def close_session(self):
         self.check_session_id()
