@@ -24,26 +24,22 @@ class RespHandler:
         timeout = timeout if timeout is not None else self.request_timeout
         try:
             response = http_request.send(timeout=timeout)
-            if response.err:
-                raise response.err
-            return response
+            return self.init_resp(response.text)
         except (HTTPError, requests.exceptions.RequestException) as e:
-            print(e)
             raise Exception(e)
 
     @staticmethod
     def init_resp(response: str) -> BaseResp:
-
-        if isinstance(response, str):
-            if "traceback" in response or "stacktrace" in response:
-                response = response.replace("stacktrace", "traceback")
-                return RespHandler.init_error_msg(response)
-            else:
-                try:
-                    response_dict: dict = json.loads(response)
-                except TypeError:
-                    raise TypeError(f'{response} cannot be deserialized!')
-                return BaseResp(**response_dict)
+        if "traceback" in response or "stacktrace" in response:
+            response = response.replace("stacktrace", "traceback")
+            return RespHandler.init_error_msg(response)
+        else:
+            try:
+                response_dict: dict = json.loads(response)
+            except json.JSONDecodeError:
+                raise ValueError(f'{response} cannot be deserialized!')
+            return BaseResp(session_id=response_dict['sessionId'],
+                            value=response_dict['value'])
 
     @staticmethod
     def init_header() -> Dict[str, str]:
@@ -53,10 +49,7 @@ class RespHandler:
     @staticmethod
     def init_error_msg(resp: str) -> BaseResp:
         err_dict: dict = json.loads(resp)
-        err = BaseResp(**err_dict)
-        if 'value' in err_dict:
-            error_msg_dict = err_dict.get('value', {})
-            error_msg = ErrorMsg(**error_msg_dict)
-            err.err = error_msg
-        err.value = None
+        error_msg_dict = err_dict.get('value', {})
+        error_msg = ErrorMsg(**error_msg_dict)
+        err = BaseResp(err=error_msg, session_id=err_dict['sessionId'])
         return err

@@ -6,9 +6,9 @@ from typing import Any, Dict, List
 from client.android_element import AndroidElement, AndroidElementImpl
 from common.http_client import HttpUtil, HttpRequest
 from common.logger import Logger
+from common.models import BaseResp, Method, WindowSize
 from common.resp_handler import RespHandler
 from common.sonic_exception import SonicRespException
-from common.models import BaseResp, Method, SessionInfo
 
 
 # Client of uiautomator2 server, see https://github.com/appium/appium-uiautomator2-server
@@ -52,20 +52,19 @@ class UiaClient:
         b: BaseResp = self.resp_handler.get_resp(
             HttpUtil.create_post(self._remote_url + "/session").body(json.dumps(data))
         )
-        if b.get_err() is None:
-            session_info = SessionInfo.parse(b.get_value())
-            self.session_id = session_info.get_session_id()
+        if b.err is None:
+            self.session_id = b.value["sessionId"]
             self.logger.info("start session successful!")
             self.logger.info("session : %s", self.session_id)
         else:
             self.logger.error("start session failed.")
-            self.logger.error("cause: %s", b.get_err().get_message())
-            raise SonicRespException(b.get_err().get_message())
+            self.logger.error("cause: %s", b.err.message)
+            raise SonicRespException(b.err.message)
 
     def close_session(self):
         self.check_session_id()
         self.resp_handler.get_resp(
-               HttpRequest(Method.DELETE, self._remote_url + "/session/" + self.session_id)
+            HttpRequest(Method.DELETE, self._remote_url + "/session/" + self.session_id)
         )
         self.logger.info("close session successful!")
 
@@ -85,12 +84,12 @@ class UiaClient:
                     + "/window/:windowHandle/size"
                 )
             )
-            if b.get_err() is None:
-                # self.size = WindowSize.parse(b)
+            if b.err is None:
+                self.size = WindowSize(width=b.value["width"], height=b.value["height"])
                 self.logger.info("get window size %s.", self.size)
             else:
                 self.logger.error("get window size failed.")
-                raise SonicRespException(b.get_err().get_message())
+                raise SonicRespException(b.err.message)
         return self.size
 
     def send_keys(self, text: str, is_cover: bool):
@@ -101,11 +100,11 @@ class UiaClient:
                 self._remote_url + "/session/" + self.session_id + "/keys"
             ).body(json.dumps(data))
         )
-        if b.get_err() is None:
+        if b.err is None:
             self.logger.info("send key %s.", text)
         else:
             self.logger.error("send key failed.")
-            raise SonicRespException(b.get_err().get_message())
+            raise SonicRespException(b.err.message)
 
     def set_pasteboard(self, content_type: str, content: str):
         self.check_session_id()
@@ -121,11 +120,11 @@ class UiaClient:
                 + "/appium/device/set_clipboard"
             ).body(json.dumps(data))
         )
-        if b.get_err() is None:
+        if b.err is None:
             self.logger.info("set pasteboard %s.", content)
         else:
             self.logger.error("set pasteboard failed.")
-            raise SonicRespException(b.get_err().get_message())
+            raise SonicRespException(b.err.message)
 
     def get_pasteboard(self, content_type: str) -> bytes:
         self.check_session_id()
@@ -138,13 +137,13 @@ class UiaClient:
                 + "/appium/device/get_clipboard"
             ).body(json.dumps(data))
         )
-        if b.get_err() is None:
-            result = b64decode(b.get_value())
+        if b.err is None:
+            result = b64decode(b.value)
             self.logger.info("get pasteboard length: %d.", len(result))
             return result
         else:
             self.logger.error("get pasteboard failed.")
-            raise SonicRespException(b.get_err().get_message())
+            raise SonicRespException(b.err.message)
 
     def page_source(self) -> str:
         self.check_session_id()
@@ -154,12 +153,12 @@ class UiaClient:
             ),
             60000,
         )
-        if b.get_err() is None:
+        if b.err is None:
             self.logger.info("get page source.")
-            return b.get_value()
+            return b.value
         else:
             self.logger.error("get page source failed.")
-            raise SonicRespException(b.get_err().get_message())
+            raise SonicRespException(b.err.message)
 
     def set_default_find_element_interval(
             self, retry: int = None, interval: int = None
@@ -172,12 +171,12 @@ class UiaClient:
     def find_element(
             self, selector: str, value: str, retry: int = None, interval: int = None
     ) -> AndroidElement:
-        androidElement = None
+        android_element = None
         wait = 0
-        intervalInit = self.FIND_ELEMENT_INTERVAL if interval is None else interval
-        retryInit = self.FIND_ELEMENT_RETRY if retry is None else retry
+        interval_init = self.FIND_ELEMENT_INTERVAL if interval is None else interval
+        retry_init = self.FIND_ELEMENT_RETRY if retry is None else retry
         err_msg = ""
-        while wait < retryInit:
+        while wait < retry_init:
             wait += 1
             self.check_session_id()
             data = {"strategy": selector, "selector": value}
@@ -186,31 +185,31 @@ class UiaClient:
                     self._remote_url + "/session/" + self.session_id + "/element"
                 ).body(json.dumps(data))
             )
-            if b.get_err() is None:
+            if b.err is None:
                 self.logger.info("find element successful.")
-                id = self.parse_element_id(b.get_value())
+                id = self.parse_element_id(b.value)
                 if len(id) > 0:
-                    androidElement = AndroidElementImpl(id, self)
+                    android_element = AndroidElementImpl(id, self)
                     break
                 else:
                     self.logger.error(
                         "parse element id %s failed. retried %d times, retry in %d ms.",
-                        b.get_value(),
+                        b.value,
                         wait,
-                        intervalInit,
+                        interval_init,
                     )
             else:
                 self.logger.error(
                     "element not found. retried %d times, retry in %d ms.",
                     wait,
-                    intervalInit,
+                    interval_init,
                 )
-                err_msg = b.get_err().get_message()
-            if wait < retryInit:
-                time.sleep(intervalInit / 1000)
-        if androidElement is None:
+                err_msg = b.err.message
+            if wait < retry_init:
+                time.sleep(interval_init / 1000)
+        if android_element is None:
             raise SonicRespException(err_msg)
-        return androidElement
+        return android_element
 
     def find_element_list(
             self, selector: str, value: str, retry: int = None, interval: int = None
@@ -229,9 +228,9 @@ class UiaClient:
                     self._remote_url + "/session/" + self.session_id + "/elements"
                 ).body(json.dumps(data))
             )
-            if b.get_err() is None:
+            if b.err is None:
                 self.logger.info("find elements successful.")
-                ids = json.loads(b.get_value())
+                ids = json.loads(b.value)
                 for ele in ids:
                     id = self.parse_element_id(ele)
                     if len(id) > 0:
@@ -246,7 +245,7 @@ class UiaClient:
                     wait,
                     interval_init,
                 )
-                err_msg = b.get_err().get_message()
+                err_msg = b.err.message
             if wait < retry_init:
                 time.sleep(interval_init / 1000)
         if len(android_element_list) == 0:
@@ -261,12 +260,12 @@ class UiaClient:
             ),
             60000,
         )
-        if b.get_err() is None:
+        if b.err is None:
             self.logger.info("get screenshot.")
-            return b64decode(b.get_value())
+            return b64decode(b.value)
         else:
             self.logger.error("get screenshot failed.")
-            raise SonicRespException(b.get_err().get_message())
+            raise SonicRespException(b.err.message)
 
     def set_appium_settings(self, settings: dict):
         self.check_session_id()
@@ -276,8 +275,8 @@ class UiaClient:
                 self._remote_url + "/session/" + self.session_id + "/appium/settings"
             ).body(json.dumps(data))
         )
-        if b.get_err() is None:
+        if b.err is None:
             self.logger.info("set appium settings %s.", json.dumps(settings))
         else:
             self.logger.error("set appium settings failed.")
-            raise SonicRespException(b.get_err().get_message())
+            raise SonicRespException(b.err.message)

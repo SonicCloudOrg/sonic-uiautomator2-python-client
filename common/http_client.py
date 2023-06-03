@@ -4,6 +4,7 @@
 import json
 
 import requests
+from requests import Response
 
 from common.models import BaseResp, ErrorMsg, Method
 
@@ -21,7 +22,7 @@ class HttpRequest:
         self._body = json.loads(body) if isinstance(body, str) else body
         return self
 
-    def send(self, timeout) -> BaseResp:
+    def send(self, timeout) -> Response:
         return HttpUtil.create_request(self.method, self.url,  timeout, self.headers, self.params, self._body)
 
 
@@ -48,23 +49,23 @@ class HttpUtil:
         return HttpRequest(Method.PATCH, url, headers)
 
     @staticmethod
-    def create_request(method: Method, url: str, timeout: float, headers=None, params=None, body=None) -> BaseResp:
+    def create_request(method: Method, url: str, timeout: float, headers=None, params=None, body=None) -> Response:
         if headers is None:
             headers = {'Content-Type': 'application/json'}
         if isinstance(body, str):
             body = json.loads(body)
 
         response = requests.request(method.value, url, timeout=timeout, headers=headers, params=params, data=json.dumps(body))
-        return HttpUtil._handle_response(response)
+        return response
 
-    @staticmethod
-    def _handle_response(response: requests.Response) -> BaseResp:
-        if response.status_code >= 400:
-            err = ErrorMsg(error=str(response.status_code), message=response.text, traceback="")
-        else:
-            err = None
-        try:
-            value = response.json()
-        except ValueError:
-            value = response.text
-        return BaseResp(session_id="", err=err, value=value)
+    # @staticmethod
+    # def _handle_response(response: requests.Response) -> BaseResp:
+    #     if response.status_code >= 400:
+    #         err = ErrorMsg(error=str(response.status_code), message=response.text, traceback="")
+    #     else:
+    #         err = None
+    #     try:
+    #         value = response.json()
+    #     except ValueError:
+    #         value = response.text
+    #     return BaseResp(session_id="", err=err, value=value)
