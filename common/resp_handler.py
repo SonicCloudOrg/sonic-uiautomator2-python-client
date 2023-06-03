@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import json
-from typing import Any, Dict, Optional, Union
+from typing import Dict, Optional
 
 import requests
 from requests.exceptions import HTTPError
 
 from common.http_client import HttpRequest
-from models import BaseResp, ErrorMsg
+from common.models import BaseResp, ErrorMsg
 
 
 class RespHandler:

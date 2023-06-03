@@ -35,6 +35,7 @@ class BaseResp:
     def get_session_id():
         return BaseResp.session_id
 
+
 class Method(StrEnum):
     GET = "GET"
     POST = "POST"
@@ -50,6 +51,15 @@ class Capabilities:
     sdk_version: str
     cf_bundle_identifier: str
 
+    @staticmethod
+    def parse(value: object):
+        se = json.loads(str(value))
+        Capabilities.device = se["device"]
+        Capabilities.browser_name = se["browserName"]
+        Capabilities.sdk_version = se["sdkVersion"]
+        Capabilities.cf_bundle_identifier = se["cfBundleIdentifier"]
+        return Capabilities
+
 
 @dataclass
 class SessionInfo:
@@ -59,11 +69,21 @@ class SessionInfo:
     def __str__(self):
         return f"SessionInfo(session_id={self.session_id}, capabilities={self.capabilities})"
 
+    @staticmethod
+    def parse(value: object):
+        se = json.loads(str(value))
+        SessionInfo.session_id = se["sessionId"]
+        SessionInfo.capabilities = Capabilities.parse(se["capabilities"])
+        return SessionInfo
+
 
 @dataclass
 class WindowSize:
     width: int
     height: int
+
+    def __str__(self):
+        return f"WindowSize(width={self.width}, height={self.height})"
 
 
 @dataclass

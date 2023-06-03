@@ -3,17 +3,15 @@ import time
 from base64 import b64decode, b64encode
 from typing import Any, Dict, List
 
-
 from client.android_element import AndroidElement, AndroidElementImpl
-from common.http_client import HttpUtil,HttpRequest
+from common.http_client import HttpUtil, HttpRequest
 from common.logger import Logger
 from common.resp_handler import RespHandler
 from common.sonic_exception import SonicRespException
-from models import BaseResp, Method, SessionInfo, WindowSize
+from common.models import BaseResp, Method, SessionInfo
+
 
 # Client of uiautomator2 server, see https://github.com/appium/appium-uiautomator2-server
-
-
 class UiaClient:
     LEGACY_WEB_ELEMENT_IDENTIFIER = "ELEMENT"
     WEB_ELEMENT_IDENTIFIER = "element-6066-11e4-a52e-4f735466cecf"
@@ -55,10 +53,8 @@ class UiaClient:
             HttpUtil.create_post(self.remote_url + "/session").body(json.dumps(data))
         )
         if b.get_err() is None:
-            # TODO parse session id
-            sessionInfo = SessionInfo.parse(b.value)
-            self.session_id = sessionInfo.get_session_id()
-            # self.session_id = b.session_id
+            session_info = SessionInfo.parse(b.get_value())
+            self.session_id = session_info.get_session_id()
             self.logger.info("start session successful!")
             self.logger.info("session : %s", self.session_id)
         else:
@@ -69,7 +65,7 @@ class UiaClient:
     def close_session(self):
         self.check_session_id()
         self.resp_handler.get_resp(
-               HttpRequest(Method.DELETE, self.remote_url + "/session/" + self.session_id)
+            HttpRequest(Method.DELETE, self.remote_url + "/session/" + self.session_id)
         )
         self.logger.info("close session successful!")
 
@@ -90,9 +86,8 @@ class UiaClient:
                 )
             )
             if b.get_err() is None:
-                # TODO parse window size
-                self.size = WindowSize.parse(b)
-                self.logger.info("get window size %s.", self.size.to_string())
+                # self.size = WindowSize.parse(b)
+                self.logger.info("get window size %s.", self.size)
             else:
                 self.logger.error("get window size failed.")
                 raise SonicRespException(b.get_err().get_message())
@@ -167,7 +162,7 @@ class UiaClient:
             raise SonicRespException(b.get_err().get_message())
 
     def set_default_find_element_interval(
-        self, retry: int = None, interval: int = None
+            self, retry: int = None, interval: int = None
     ):
         if retry is not None:
             self.FIND_ELEMENT_RETRY = retry
@@ -175,7 +170,7 @@ class UiaClient:
             self.FIND_ELEMENT_INTERVAL = interval
 
     def find_element(
-        self, selector: str, value: str, retry: int = None, interval: int = None
+            self, selector: str, value: str, retry: int = None, interval: int = None
     ) -> AndroidElement:
         androidElement = None
         wait = 0
@@ -218,7 +213,7 @@ class UiaClient:
         return androidElement
 
     def find_element_list(
-        self, selector: str, value: str, retry: int = None, interval: int = None
+            self, selector: str, value: str, retry: int = None, interval: int = None
     ) -> List[AndroidElement]:
         android_element_list = []
         wait = 0
