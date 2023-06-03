@@ -19,7 +19,7 @@ class UiaClient:
     FIND_ELEMENT_RETRY = 5
 
     def __init__(self):
-        self.remote_url = ""
+        self._remote_url = ""
         self.session_id = ""
         self.resp_handler = RespHandler()
         self.logger = Logger()
@@ -27,11 +27,11 @@ class UiaClient:
 
     @property
     def remote_url(self):
-        return self.remote_url
+        return self._remote_url
 
     @remote_url.setter
     def remote_url(self, url: str):
-        self.remote_url = url
+        self._remote_url = url
 
     def check_bundle_id(self, bundle_id: str):
         if not bundle_id:
@@ -50,7 +50,7 @@ class UiaClient:
     def new_session(self, capabilities: Dict):
         data = {"capabilities": capabilities}
         b: BaseResp = self.resp_handler.get_resp(
-            HttpUtil.create_post(self.remote_url + "/session").body(json.dumps(data))
+            HttpUtil.create_post(self._remote_url + "/session").body(json.dumps(data))
         )
         if b.get_err() is None:
             session_info = SessionInfo.parse(b.get_value())
@@ -65,7 +65,7 @@ class UiaClient:
     def close_session(self):
         self.check_session_id()
         self.resp_handler.get_resp(
-            HttpRequest(Method.DELETE, self.remote_url + "/session/" + self.session_id)
+               HttpRequest(Method.DELETE, self._remote_url + "/session/" + self.session_id)
         )
         self.logger.info("close session successful!")
 
@@ -79,7 +79,7 @@ class UiaClient:
             self.check_session_id()
             b: BaseResp = self.resp_handler.get_resp(
                 HttpUtil.create_get(
-                    self.remote_url
+                    self._remote_url
                     + "/session/"
                     + self.session_id
                     + "/window/:windowHandle/size"
@@ -98,7 +98,7 @@ class UiaClient:
         data = {"text": text, "replace": is_cover}
         b = self.resp_handler.get_resp(
             HttpUtil.create_post(
-                self.remote_url + "/session/" + self.session_id + "/keys"
+                self._remote_url + "/session/" + self.session_id + "/keys"
             ).body(json.dumps(data))
         )
         if b.get_err() is None:
@@ -115,7 +115,7 @@ class UiaClient:
         }
         b = self.resp_handler.get_resp(
             HttpUtil.create_post(
-                self.remote_url
+                self._remote_url
                 + "/session/"
                 + self.session_id
                 + "/appium/device/set_clipboard"
@@ -132,7 +132,7 @@ class UiaClient:
         data = {"contentType": content_type.upper()}
         b = self.resp_handler.get_resp(
             HttpUtil.create_post(
-                self.remote_url
+                self._remote_url
                 + "/session/"
                 + self.session_id
                 + "/appium/device/get_clipboard"
@@ -150,7 +150,7 @@ class UiaClient:
         self.check_session_id()
         b = self.resp_handler.get_resp(
             HttpUtil.create_get(
-                self.remote_url + "/session/" + self.session_id + "/source"
+                self._remote_url + "/session/" + self.session_id + "/source"
             ),
             60000,
         )
@@ -183,7 +183,7 @@ class UiaClient:
             data = {"strategy": selector, "selector": value}
             b = self.resp_handler.get_resp(
                 HttpUtil.create_post(
-                    self.remote_url + "/session/" + self.session_id + "/element"
+                    self._remote_url + "/session/" + self.session_id + "/element"
                 ).body(json.dumps(data))
             )
             if b.get_err() is None:
@@ -226,7 +226,7 @@ class UiaClient:
             data = {"strategy": selector, "selector": value}
             b = self.resp_handler.get_resp(
                 HttpUtil.create_post(
-                    self.remote_url + "/session/" + self.session_id + "/elements"
+                    self._remote_url + "/session/" + self.session_id + "/elements"
                 ).body(json.dumps(data))
             )
             if b.get_err() is None:
@@ -257,7 +257,7 @@ class UiaClient:
         self.check_session_id()
         b = self.resp_handler.get_resp(
             HttpUtil.create_get(
-                self.remote_url + "/session/" + self.session_id + "/screenshot"
+                self._remote_url + "/session/" + self.session_id + "/screenshot"
             ),
             60000,
         )
@@ -273,7 +273,7 @@ class UiaClient:
         data = {"settings": settings}
         b = self.resp_handler.get_resp(
             HttpUtil.create_post(
-                self.remote_url + "/session/" + self.session_id + "/appium/settings"
+                self._remote_url + "/session/" + self.session_id + "/appium/settings"
             ).body(json.dumps(data))
         )
         if b.get_err() is None:
