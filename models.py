@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import json
 from dataclasses import dataclass
-from enum import StrEnum
+from enum import Enum
 from typing import Any, Optional
 
 
@@ -35,7 +35,8 @@ class BaseResp:
     def get_session_id():
         return BaseResp.session_id
 
-class Method(StrEnum):
+
+class Method(Enum):
     GET = "GET"
     POST = "POST"
     PUT = "PUT"
