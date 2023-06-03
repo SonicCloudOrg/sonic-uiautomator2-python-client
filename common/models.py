@@ -33,7 +33,7 @@ class BaseResp:
 
     @staticmethod
     def get_session_id():
-        return BaseResp.session_id
+        return BaseResp.value.get("sessionId")
 
 class Method(StrEnum):
     GET = "GET"
