@@ -13,5 +13,8 @@ class AndroidDriver(object):
         self._client.resp_handler.set_request_timeout(timeout)
         self._client.new_session(cap)
 
+    def close_driver(self):
+        self._client.close_session()
+
     def get_page_source(self):
         return self._client.page_source()
