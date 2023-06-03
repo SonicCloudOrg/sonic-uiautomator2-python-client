@@ -181,7 +181,7 @@ class UiaClient:
         wait = 0
         intervalInit = self.FIND_ELEMENT_INTERVAL if interval is None else interval
         retryInit = self.FIND_ELEMENT_RETRY if retry is None else retry
-        errMsg = ""
+        err_msg = ""
         while wait < retryInit:
             wait += 1
             self.check_session_id()
@@ -210,22 +210,22 @@ class UiaClient:
                     wait,
                     intervalInit,
                 )
-                errMsg = b.get_err().get_message()
+                err_msg = b.get_err().get_message()
             if wait < retryInit:
                 time.sleep(intervalInit / 1000)
         if androidElement is None:
-            raise SonicRespException(errMsg)
+            raise SonicRespException(err_msg)
         return androidElement
 
     def find_element_list(
         self, selector: str, value: str, retry: int = None, interval: int = None
     ) -> List[AndroidElement]:
-        androidElementList = []
+        android_element_list = []
         wait = 0
-        intervalInit = self.FIND_ELEMENT_INTERVAL if interval is None else interval
-        retryInit = self.FIND_ELEMENT_RETRY if retry is None else retry
-        errMsg = ""
-        while wait < retryInit:
+        interval_init = self.FIND_ELEMENT_INTERVAL if interval is None else interval
+        retry_init = self.FIND_ELEMENT_RETRY if retry is None else retry
+        err_msg = ""
+        while wait < retry_init:
             wait += 1
             self.check_session_id()
             data = {"strategy": selector, "selector": value}
@@ -240,7 +240,7 @@ class UiaClient:
                 for ele in ids:
                     id = self.parse_element_id(ele)
                     if len(id) > 0:
-                        androidElementList.append(AndroidElementImpl(id, self))
+                        android_element_list.append(AndroidElementImpl(id, self))
                     else:
                         self.logger.error("parse element id %s failed.", ele)
                         continue
@@ -249,14 +249,14 @@ class UiaClient:
                 self.logger.error(
                     "elements not found. retried %d times, retry in %d ms.",
                     wait,
-                    intervalInit,
+                    interval_init,
                 )
-                errMsg = b.get_err().get_message()
-            if wait < retryInit:
-                time.sleep(intervalInit / 1000)
-        if len(androidElementList) == 0:
-            raise SonicRespException(errMsg)
-        return androidElementList
+                err_msg = b.get_err().get_message()
+            if wait < retry_init:
+                time.sleep(interval_init / 1000)
+        if len(android_element_list) == 0:
+            raise SonicRespException(err_msg)
+        return android_element_list
 
     def screenshot(self) -> bytes:
         self.check_session_id()
