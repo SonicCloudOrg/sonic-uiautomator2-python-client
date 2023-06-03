@@ -24,18 +24,21 @@ class RespHandler:
         timeout = timeout if timeout is not None else self.request_timeout
         try:
             response = http_request.send(timeout=timeout)
-            return self.init_resp(response)
+            return self.init_resp(response.value)
         except (HTTPError, requests.exceptions.RequestException) as e:
             print(e)
             raise Exception(e)
 
     @staticmethod
     def init_resp(response: str) -> BaseResp:
-        response_dict: dict = json.loads(response)
         if "traceback" in response or "stacktrace" in response:
             response = response.replace("stacktrace", "traceback")
             return RespHandler.init_error_msg(response)
         else:
+            try:
+                response_dict: dict = json.loads(response)
+            except json.JSONDecodeError:
+                raise ValueError(f'{response} cannot be deserialized!')
             return BaseResp(**response_dict)
 
     @staticmethod

@@ -15,14 +15,14 @@ class HttpRequest:
         self.url = url
         self.headers = headers
         self.params = params
-        self.body = body
+        self._body = body
 
     def body(self, body):
-        self.body = json.loads(body) if isinstance(body, str) else body
+        self._body = json.loads(body) if isinstance(body, str) else body
         return self
 
     def send(self, timeout) -> BaseResp:
-        return HttpUtil.create_request(self.method, self.url,  timeout, self.headers, self.params, self.body)
+        return HttpUtil.create_request(self.method, self.url,  timeout, self.headers, self.params, self._body)
 
 
 class HttpUtil:

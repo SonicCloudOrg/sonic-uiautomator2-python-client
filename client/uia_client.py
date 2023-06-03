@@ -5,7 +5,7 @@ from typing import Any, Dict, List
 
 
 from client.android_element import AndroidElement, AndroidElementImpl
-from common.http_client import HttpUtil
+from common.http_client import HttpUtil,HttpRequest
 from common.logger import Logger
 from common.resp_handler import RespHandler
 from common.sonic_exception import SonicRespException
@@ -26,6 +26,14 @@ class UiaClient:
         self.resp_handler = RespHandler()
         self.logger = Logger()
         self.size = None
+
+    @property
+    def remote_url(self):
+        return self.remote_url
+
+    @remote_url.setter
+    def remote_url(self, url: str):
+        self.remote_url = url
 
     def check_bundle_id(self, bundle_id: str):
         if not bundle_id:
@@ -48,8 +56,9 @@ class UiaClient:
         )
         if b.err is None:
             # TODO parse session id
-            sessionInfo = SessionInfo.parse(b)
+            sessionInfo = SessionInfo.parse(b.value)
             self.session_id = sessionInfo.get_session_id()
+            # self.session_id = b.session_id
             self.logger.info("start session successful!")
             self.logger.info("session : %s", self.session_id)
         else:
@@ -60,9 +69,7 @@ class UiaClient:
     def close_session(self):
         self.check_session_id()
         self.resp_handler.get_resp(
-            HttpUtil.create_request(
-                Method.DELETE, self.remote_url + "/session/" + self.session_id
-            )
+               HttpRequest(Method.DELETE, self.remote_url + "/session/" + self.session_id)
         )
         self.logger.info("close session successful!")
 
