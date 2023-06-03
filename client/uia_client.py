@@ -3,17 +3,15 @@ import time
 from base64 import b64decode, b64encode
 from typing import Any, Dict, List
 
-
 from client.android_element import AndroidElement, AndroidElementImpl
-from common.http_client import HttpUtil,HttpRequest
+from common.http_client import HttpUtil, HttpRequest
 from common.logger import Logger
 from common.resp_handler import RespHandler
 from common.sonic_exception import SonicRespException
-from models import BaseResp, Method, SessionInfo, WindowSize
+from common.models import BaseResp, Method, SessionInfo
+
 
 # Client of uiautomator2 server, see https://github.com/appium/appium-uiautomator2-server
-
-
 class UiaClient:
     LEGACY_WEB_ELEMENT_IDENTIFIER = "ELEMENT"
     WEB_ELEMENT_IDENTIFIER = "element-6066-11e4-a52e-4f735466cecf"
@@ -54,14 +52,15 @@ class UiaClient:
         b: BaseResp = self.resp_handler.get_resp(
             HttpUtil.create_post(self._remote_url + "/session").body(json.dumps(data))
         )
-        if b.err:
-            # TODO parse session id
-            # sessionInfo = SessionInfo.parse(b.value)
-            # self.session_id = sessionInfo.get_session_id()
-            self.session_id = b.value.get("sessionId")
+        if b.get_err() is None:
+            session_info = SessionInfo.parse(b.get_value())
+            self.session_id = session_info.get_session_id()
+            self.logger.info("start session successful!")
+            self.logger.info("session : %s", self.session_id)
+        else:
             self.logger.error("start session failed.")
-            self.logger.error("cause: %s", b.err.message)
-            raise SonicRespException(b.err.message)
+            self.logger.error("cause: %s", b.get_err().get_message())
+            raise SonicRespException(b.get_err().get_message())
 
     def close_session(self):
         self.check_session_id()
@@ -87,9 +86,8 @@ class UiaClient:
                 )
             )
             if b.get_err() is None:
-                # TODO parse window size
-                self.size = WindowSize.parse(b)
-                self.logger.info("get window size %s.", self.size.to_string())
+                # self.size = WindowSize.parse(b)
+                self.logger.info("get window size %s.", self.size)
             else:
                 self.logger.error("get window size failed.")
                 raise SonicRespException(b.get_err().get_message())
@@ -164,7 +162,7 @@ class UiaClient:
             raise SonicRespException(b.get_err().get_message())
 
     def set_default_find_element_interval(
-        self, retry: int = None, interval: int = None
+            self, retry: int = None, interval: int = None
     ):
         if retry is not None:
             self.FIND_ELEMENT_RETRY = retry
@@ -172,13 +170,13 @@ class UiaClient:
             self.FIND_ELEMENT_INTERVAL = interval
 
     def find_element(
-        self, selector: str, value: str, retry: int = None, interval: int = None
+            self, selector: str, value: str, retry: int = None, interval: int = None
     ) -> AndroidElement:
         androidElement = None
         wait = 0
         intervalInit = self.FIND_ELEMENT_INTERVAL if interval is None else interval
         retryInit = self.FIND_ELEMENT_RETRY if retry is None else retry
-        errMsg = ""
+        err_msg = ""
         while wait < retryInit:
             wait += 1
             self.check_session_id()
@@ -207,22 +205,22 @@ class UiaClient:
                     wait,
                     intervalInit,
                 )
-                errMsg = b.get_err().get_message()
+                err_msg = b.get_err().get_message()
             if wait < retryInit:
                 time.sleep(intervalInit / 1000)
         if androidElement is None:
-            raise SonicRespException(errMsg)
+            raise SonicRespException(err_msg)
         return androidElement
 
     def find_element_list(
-        self, selector: str, value: str, retry: int = None, interval: int = None
+            self, selector: str, value: str, retry: int = None, interval: int = None
     ) -> List[AndroidElement]:
-        androidElementList = []
+        android_element_list = []
         wait = 0
-        intervalInit = self.FIND_ELEMENT_INTERVAL if interval is None else interval
-        retryInit = self.FIND_ELEMENT_RETRY if retry is None else retry
-        errMsg = ""
-        while wait < retryInit:
+        interval_init = self.FIND_ELEMENT_INTERVAL if interval is None else interval
+        retry_init = self.FIND_ELEMENT_RETRY if retry is None else retry
+        err_msg = ""
+        while wait < retry_init:
             wait += 1
             self.check_session_id()
             data = {"strategy": selector, "selector": value}
@@ -237,7 +235,7 @@ class UiaClient:
                 for ele in ids:
                     id = self.parse_element_id(ele)
                     if len(id) > 0:
-                        androidElementList.append(AndroidElementImpl(id, self))
+                        android_element_list.append(AndroidElementImpl(id, self))
                     else:
                         self.logger.error("parse element id %s failed.", ele)
                         continue
@@ -246,14 +244,14 @@ class UiaClient:
                 self.logger.error(
                     "elements not found. retried %d times, retry in %d ms.",
                     wait,
-                    intervalInit,
+                    interval_init,
                 )
-                errMsg = b.get_err().get_message()
-            if wait < retryInit:
-                time.sleep(intervalInit / 1000)
-        if len(androidElementList) == 0:
-            raise SonicRespException(errMsg)
-        return androidElementList
+                err_msg = b.get_err().get_message()
+            if wait < retry_init:
+                time.sleep(interval_init / 1000)
+        if len(android_element_list) == 0:
+            raise SonicRespException(err_msg)
+        return android_element_list
 
     def screenshot(self) -> bytes:
         self.check_session_id()

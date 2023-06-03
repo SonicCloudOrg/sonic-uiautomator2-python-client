@@ -6,7 +6,6 @@ class AndroidDriver(object):
 
     def __init__(self, url):
         self._client = UiaClient()
-        # self._client.set_remote_url(url)
         self._client.remote_url = url
         self._client.new_session({})
 

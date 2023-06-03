@@ -5,7 +5,7 @@ import json
 
 import requests
 
-from models import BaseResp, ErrorMsg, Method
+from common.models import BaseResp, ErrorMsg, Method
 
 
 class HttpRequest:

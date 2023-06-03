@@ -7,7 +7,7 @@ from abc import abstractmethod
 
 from common.http_client import HttpUtil
 from common.sonic_exception import SonicRespException
-from models import ElementRect
+from common.models import ElementRect
 
 
 class AndroidElement:
