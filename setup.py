@@ -3,9 +3,9 @@
 import os
 from setuptools import setup, find_packages
 
-MAJOR = 1
+MAJOR = 0
 MINOR = 0
-PATCH = 0
+PATCH = 1
 VERSION = f"{MAJOR}.{MINOR}.{PATCH}"
 
 setup(
@@ -20,7 +20,6 @@ setup(
     packages=find_packages(),
     license='MIT',
     classifiers=[
-        'License :: MIT',
         'Natural Language :: English',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
