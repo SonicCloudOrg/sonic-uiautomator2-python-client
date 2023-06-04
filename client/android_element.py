@@ -11,28 +11,6 @@ from common.models import ElementRect
 
 
 class AndroidElement:
-    @abstractmethod
-    def click(self) -> None:
-        pass
-
-    @abstractmethod
-    def send_keys(self, text: str, is_cover: bool = False) -> None:
-        pass
-
-    @abstractmethod
-    def clear(self) -> None:
-        pass
-
-    @abstractmethod
-    def get_text(self) -> str:
-        pass
-
-    @abstractmethod
-    def screenshot(self) -> bytes:
-        pass
-
-
-class AndroidElementImpl(AndroidElement):
     def __init__(self, id: str, uia_client):
         self.id = id
         self.uia_client = uia_client
@@ -42,7 +20,7 @@ class AndroidElementImpl(AndroidElement):
         self.uia_client.check_session_id()
         b = self.uia_client.get_resp_handler().get_resp(
             HttpUtil.create_post(
-                f"{self.uia_client.get_remote_url()}/session/{self.uia_client.get_session_id()}/element/{self.id}/click"
+                f"{self.uia_client.remote_url}/session/{self.uia_client.get_session_id()}/element/{self.id}/click"
             )
         )
         if b.err is None:
@@ -56,7 +34,7 @@ class AndroidElementImpl(AndroidElement):
         data = json.dumps({"text": text, "replace": is_cover})
         b = self.uia_client.get_resp_handler().get_resp(
             HttpUtil.create_post(
-                f"{self.uia_client.get_remote_url()}/session/{self.uia_client.get_session_id()}/element/{self.id}/value"
+                f"{self.uia_client.remote_url}/session/{self.uia_client.get_session_id()}/element/{self.id}/value"
             ).body(data),
             60000,
         )
@@ -70,7 +48,7 @@ class AndroidElementImpl(AndroidElement):
         self.uia_client.check_session_id()
         b = self.uia_client.get_resp_handler().get_resp(
             HttpUtil.create_post(
-                f"{self.uia_client.get_remote_url()}/session/{self.uia_client.get_session_id()}/element/{self.id}/clear"
+                f"{self.uia_client.remote_url}/session/{self.uia_client.get_session_id()}/element/{self.id}/clear"
             ),
             60000,
         )
@@ -84,7 +62,7 @@ class AndroidElementImpl(AndroidElement):
         self.uia_client.check_session_id()
         b = self.uia_client.get_resp_handler().get_resp(
             HttpUtil.create_get(
-                f"{self.uia_client.get_remote_url()}/session/{self.uia_client.get_session_id()}/element/{self.id}/text"
+                f"{self.uia_client.remote_url}/session/{self.uia_client.get_session_id()}/element/{self.id}/text"
             )
         )
         if b.err is None:
@@ -98,7 +76,7 @@ class AndroidElementImpl(AndroidElement):
         self.uia_client.check_session_id()
         b = self.uia_client.get_resp_handler().get_resp(
             HttpUtil.create_get(
-                f"{self.uia_client.get_remote_url()}/session/{self.uia_client.get_session_id()}/element/{self.id}/attribute/{name}"
+                f"{self.uia_client.remote_url}/session/{self.uia_client.get_session_id()}/element/{self.id}/attribute/{name}"
             )
         )
         if b.err is None:
@@ -115,7 +93,7 @@ class AndroidElementImpl(AndroidElement):
         self.uia_client.check_session_id()
         b = self.uia_client.get_resp_handler().get_resp(
             HttpUtil.create_get(
-                f"{self.uia_client.get_remote_url()}/session/{self.uia_client.get_session_id()}/element/{self.id}/rect"
+                f"{self.uia_client.remote_url}/session/{self.uia_client.get_session_id()}/element/{self.id}/rect"
             )
         )
         if b.err is None:
@@ -130,7 +108,7 @@ class AndroidElementImpl(AndroidElement):
         self.uia_client.check_session_id()
         b = self.uia_client.get_resp_handler().get_resp(
             HttpUtil.create_get(
-                f"{self.uia_client.get_remote_url()}/session/{self.uia_client.get_session_id()}/element/{self.id}/screenshot"
+                f"{self.uia_client.remote_url}/session/{self.uia_client.get_session_id()}/element/{self.id}/screenshot"
             ),
             60000,
         )

@@ -3,7 +3,7 @@ import time
 from base64 import b64decode, b64encode
 from typing import Any, Dict, List
 
-from client.android_element import AndroidElement, AndroidElementImpl
+from client.android_element import AndroidElement
 from common.http_client import HttpUtil, HttpRequest
 from common.logger import Logger
 from common.models import BaseResp, Method, WindowSize
@@ -38,14 +38,22 @@ class UiaClient:
             self.logger.error("bundleId not found.")
             raise SonicRespException("bundleId not found.")
 
-    def parse_element_id(self, o: Any) -> str:
-        json_object = json.loads(o)
+    def parse_element_id(self, o: dict) -> str:
         identifier = [self.LEGACY_WEB_ELEMENT_IDENTIFIER, self.WEB_ELEMENT_IDENTIFIER]
         for i in identifier:
-            result = json_object.get(i, "")
+            result = o.get(i, "")
             if result:
                 return result
         return ""
+
+    def get_logger(self):
+        return self.logger
+
+    def get_resp_handler(self):
+        return self.resp_handler
+
+    def get_session_id(self):
+        return self.session_id
 
     def new_session(self, capabilities: Dict):
         data = {"capabilities": capabilities}
@@ -189,7 +197,7 @@ class UiaClient:
                 self.logger.info("find element successful.")
                 id = self.parse_element_id(b.value)
                 if len(id) > 0:
-                    android_element = AndroidElementImpl(id, self)
+                    android_element = AndroidElement(id, self)
                     break
                 else:
                     self.logger.error(
@@ -234,7 +242,7 @@ class UiaClient:
                 for ele in ids:
                     id = self.parse_element_id(ele)
                     if len(id) > 0:
-                        android_element_list.append(AndroidElementImpl(id, self))
+                        android_element_list.append(AndroidElement(id, self))
                     else:
                         self.logger.error("parse element id %s failed.", ele)
                         continue

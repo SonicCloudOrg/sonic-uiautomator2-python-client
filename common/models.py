@@ -27,6 +27,20 @@ class Method(StrEnum):
     PATCH = "PATCH"
 
 
+class PasteboardType(StrEnum):
+    PLAIN_TEXT = "plaintext"
+    IMAGE = "image"
+    URL = "url"
+
+
+class AndroidSelector(StrEnum):
+    CLASS_NAME = "class name"
+    Id = "id"
+    ACCESSIBILITY_ID = "accessibility id"
+    XPATH = "xpath"
+    UIAUTOMATOR = "-android uiautomator"
+
+
 @dataclass
 class WindowSize:
     width: int
@@ -42,11 +56,3 @@ class ElementRect:
     y: int
     width: int
     height: int
-
-    @dataclass
-    class IOSRectCenter:
-        x: int
-        y: int
-
-    def get_center(self) -> "ElementRect.IOSRectCenter":
-        return self.IOSRectCenter(self.x // 2, self.y // 2)

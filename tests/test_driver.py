@@ -1,3 +1,4 @@
+from common.models import AndroidSelector
 from uia2.driver import AndroidDriver
 
 
@@ -12,3 +13,8 @@ class TestDriver:
         p = driver.get_page_source()
         print(p)
 
+    def test_element(self):
+        driver = AndroidDriver("http://localhost:6790")
+        e = driver.find_element(AndroidSelector.XPATH, "//*[@text='标题']")
+        print(e.get_text())
+        e.send_keys("Hello")
