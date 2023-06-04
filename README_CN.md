@@ -8,6 +8,14 @@
   </a>
   <span>| 简体中文</span>
 </p>
+<p align="center">
+  <a href="#">  
+    <img src="https://img.shields.io/pypi/v/sonic-uia2-client">
+  </a>
+<!--   <a href="#">  
+    <img src="https://img.shields.io/pypi/dm/sonic-uia2-client">
+  </a> -->
+</p>
 
 
 ### 背景
@@ -20,9 +28,9 @@
 
 1. 安装uia2 server
 
-你需要先安装 `sonic-appium-uiautomator2-server.apk` 和 `sonic-appium-uiautomator2-server-test.apk` ，可以从这里下载 [这里](https://github.com/SonicCloudOrg/sonic-agent/tree/main/plugins).
-
-当然你也可以自己构建 [前往这里](https://github.com/SonicCloudOrg/sonic-appium-uiautomator2-server)
+> 你需要先安装 `sonic-appium-uiautomator2-server.apk` 和 `sonic-appium-uiautomator2-server-test.apk` ，可以从这里下载 [这里](https://github.com/SonicCloudOrg/sonic-agent/tree/main/plugins).
+> 
+> 当然你也可以自己构建 [前往这里](https://github.com/SonicCloudOrg/sonic-appium-uiautomator2-server)
 
 2. 启动 uiautomator2 server
 ```bash
