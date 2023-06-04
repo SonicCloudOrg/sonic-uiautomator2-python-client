@@ -8,6 +8,15 @@
      简体中文
   </a>
 </p>
+<p align="center">
+  <a href="#">  
+    <img src="https://img.shields.io/pypi/v/sonic-uia2-client">
+  </a>
+<!--   <a href="#">  
+    <img src="https://img.shields.io/pypi/dm/sonic-uia2-client">
+  </a> -->
+</p>
+
 
 ### Background
 
@@ -19,9 +28,9 @@ At present, only one project [appium-uiautomator2-client](https://github.com/xso
 
 1. Install uiautomator2 server
 
-You should install `sonic-appium-uiautomator2-server.apk` and `sonic-appium-uiautomator2-server-test.apk` in [Here](https://github.com/SonicCloudOrg/sonic-agent/tree/main/plugins).
-
-Alternatively, you can build your own [Here](https://github.com/SonicCloudOrg/sonic-appium-uiautomator2-server)
+> You should install `sonic-appium-uiautomator2-server.apk` and `sonic-appium-uiautomator2-server-test.apk` in [Here](https://github.com/SonicCloudOrg/sonic-agent/tree/main/plugins).
+> 
+> Alternatively, you can build your own [Here](https://github.com/SonicCloudOrg/sonic-appium-uiautomator2-server)
 
 2. Launch uiautomator2 server
 ```bash
