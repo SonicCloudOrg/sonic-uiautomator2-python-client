@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 MAJOR = 0
 MINOR = 0
 PATCH = 1
-VERSION = f"v{MAJOR}.{MINOR}.{PATCH}"
+VERSION = f"{MAJOR}.{MINOR}.{PATCH}"
 
 setup(
     name="sonic-uia2-client",
