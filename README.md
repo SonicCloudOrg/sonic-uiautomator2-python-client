@@ -12,9 +12,9 @@
   <a href="#">  
     <img src="https://img.shields.io/pypi/v/sonic-uia2-client">
   </a>
-<!--   <a href="#">  
+  <a href="#">  
     <img src="https://img.shields.io/pypi/dm/sonic-uia2-client">
-  </a> -->
+  </a>
 </p>
 
 
