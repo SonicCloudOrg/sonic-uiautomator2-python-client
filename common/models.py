@@ -1,7 +1,7 @@
 # !/usr/bin/python3
 # -*- coding: utf-8 -*-
 from dataclasses import dataclass
-from enum import StrEnum
+from enum import Enum
 from typing import Any, Optional
 
 
@@ -19,7 +19,7 @@ class BaseResp:
     value: Any = None
 
 
-class Method(StrEnum):
+class Method(Enum):
     GET = "GET"
     POST = "POST"
     PUT = "PUT"
@@ -27,13 +27,13 @@ class Method(StrEnum):
     PATCH = "PATCH"
 
 
-class PasteboardType(StrEnum):
+class PasteboardType(Enum):
     PLAIN_TEXT = "plaintext"
     IMAGE = "image"
     URL = "url"
 
 
-class AndroidSelector(StrEnum):
+class AndroidSelector(Enum):
     CLASS_NAME = "class name"
     Id = "id"
     ACCESSIBILITY_ID = "accessibility id"
