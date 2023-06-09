@@ -1,5 +1,5 @@
 from client.uia_client import UiaClient
-from common.models import PasteboardType
+from common.models import PasteboardType, AndroidSelector
 from common.resp_handler import RespHandler
 
 
@@ -46,11 +46,11 @@ class AndroidDriver(object):
     def set_default_find_element_interval(self, retry: int, interval: int):
         self._client.set_default_find_element_interval(retry, interval)
 
-    def find_element(self, selector: str, value: str, retry: int = None, interval: int = None):
-        return self._client.find_element(selector, value, retry, interval)
+    def find_element(self, selector: AndroidSelector, value: str, retry: int = None, interval: int = None):
+        return self._client.find_element(selector.value, value, retry, interval)
 
-    def find_element_list(self, selector: str, value: str, retry: int = None, interval: int = None):
-        return self._client.find_element_list(selector, value, retry, interval)
+    def find_element_list(self, selector: AndroidSelector, value: str, retry: int = None, interval: int = None):
+        return self._client.find_element_list(selector.value, value, retry, interval)
 
     def screenshot(self):
         return self._client.screenshot()
