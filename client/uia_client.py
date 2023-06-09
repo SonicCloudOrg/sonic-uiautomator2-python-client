@@ -6,7 +6,7 @@ from typing import Any, Dict, List
 from client.android_element import AndroidElement
 from common.http_client import HttpUtil, HttpRequest
 from common.logger import Logger
-from common.models import BaseResp, Method, WindowSize
+from common.models import BaseResp, Method, WindowSize, AndroidSelector
 from common.resp_handler import RespHandler
 from common.sonic_exception import SonicRespException
 
@@ -177,7 +177,7 @@ class UiaClient:
             self.FIND_ELEMENT_INTERVAL = interval
 
     def find_element(
-            self, selector: str, value: str, retry: int = None, interval: int = None
+            self, selector: AndroidSelector, value: str, retry: int = None, interval: int = None
     ) -> AndroidElement:
         android_element = None
         wait = 0
@@ -187,7 +187,7 @@ class UiaClient:
         while wait < retry_init:
             wait += 1
             self.check_session_id()
-            data = {"strategy": selector, "selector": value}
+            data = {"strategy": selector.value, "selector": value}
             b = self.resp_handler.get_resp(
                 HttpUtil.create_post(
                     self._remote_url + "/session/" + self.session_id + "/element"
@@ -220,7 +220,7 @@ class UiaClient:
         return android_element
 
     def find_element_list(
-            self, selector: str, value: str, retry: int = None, interval: int = None
+            self, selector: AndroidSelector, value: str, retry: int = None, interval: int = None
     ) -> List[AndroidElement]:
         android_element_list = []
         wait = 0
@@ -230,7 +230,7 @@ class UiaClient:
         while wait < retry_init:
             wait += 1
             self.check_session_id()
-            data = {"strategy": selector, "selector": value}
+            data = {"strategy": selector.value, "selector": value}
             b = self.resp_handler.get_resp(
                 HttpUtil.create_post(
                     self._remote_url + "/session/" + self.session_id + "/elements"
