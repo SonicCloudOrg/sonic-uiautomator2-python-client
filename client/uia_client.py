@@ -237,8 +237,7 @@ class UiaClient:
                 ).body(json.dumps(data))
             )
             if b.err is None:
-                self.logger.info("find elements successful.")
-                ids = json.loads(b.value)
+                ids = b.value
                 for ele in ids:
                     id = self.parse_element_id(ele)
                     if len(id) > 0:
@@ -257,7 +256,9 @@ class UiaClient:
             if wait < retry_init:
                 time.sleep(interval_init / 1000)
         if len(android_element_list) == 0:
-            raise SonicRespException(err_msg)
+            self.logger.info("No elements found.")
+        elif len(android_element_list) > 0:
+            self.logger.info("find elements successful.")
         return android_element_list
 
     def screenshot(self) -> bytes:
