@@ -1,3 +1,5 @@
+from typing import Union
+
 from client.uia_client import UiaClient
 from common.models import PasteboardType, AndroidSelector
 from common.resp_handler import RespHandler
@@ -57,3 +59,13 @@ class AndroidDriver(object):
 
     def set_appium_settings(self, settings: dict):
         self._client.set_appium_settings(settings)
+
+    def tap(self, x: int, y: int):
+        return self._client.tap(x, y)
+
+    def long_press(self, x: Union[int, float], y: Union[int, float], duration_ms: Union[int, float]):
+        return self._client.long_press(x, y, duration_ms)
+
+    def swipe(self, start_x: Union[int, float], start_y: Union[int, float], end_x: Union[int, float],
+              end_y: Union[int, float], duration_ms: Union[int, float]):
+        return self._client.swipe(start_x, start_y, end_x, end_y, duration_ms)
