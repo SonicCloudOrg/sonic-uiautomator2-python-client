@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 MAJOR = 0
 MINOR = 0
-PATCH = 6
+PATCH = 7
 VERSION = f"{MAJOR}.{MINOR}.{PATCH}"
 
 setup(
