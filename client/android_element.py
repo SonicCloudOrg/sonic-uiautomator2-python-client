@@ -97,7 +97,8 @@ class AndroidElement:
             )
         )
         if b.err is None:
-            element_rect = ElementRect(**json.loads(b.value))
+            rect = b.value if isinstance(b.value, dict) else json.loads(b.value)
+            element_rect = ElementRect(**rect)
             self.logger.info(f"get {self.id} rect {element_rect}.")
             return element_rect
         else:
