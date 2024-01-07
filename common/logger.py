@@ -5,6 +5,8 @@ import logging
 
 
 class Logger:
+    HANDLER = logging.StreamHandler()
+
     def __init__(self):
         self.formatter = logging.Formatter(
             "%(asctime)s [%(levelname)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
@@ -13,7 +15,7 @@ class Logger:
         self.logger = logging.getLogger("sonic-driver-core")
         self.set_log_level(logging.INFO)
 
-        ch = logging.StreamHandler()
+        ch = self.HANDLER
         ch.setFormatter(self.formatter)
         self.logger.addHandler(ch)
 
