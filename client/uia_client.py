@@ -334,3 +334,43 @@ class UiaClient:
         else:
             self.logger.error("perform swipe action failed.")
             raise SonicRespException(b.err.message)
+
+    def drag(self, start_x: Union[int, float], start_y: Union[int, float], end_x: Union[int, float],
+             end_y: Union[int, float], duration_ms: Union[int, float], element_id: str, dest_el_id: str):
+        self.check_session_id()
+        data = {
+            "startX": start_x,
+            "startY": start_y,
+            "endX": end_x,
+            "endY": end_y,
+            "step": int(duration_ms / 5) if duration_ms else 100,
+            "elementId": element_id,
+            "destElId": dest_el_id,
+        }
+        b = self.resp_handler.get_resp(
+            HttpUtil.create_post(self._remote_url + "/session/" + self.session_id + "/touch/drag").body(
+                json.dumps(data)))
+        if b.err is None:
+            self.logger.info("perform drag action %s.", json.dumps(data))
+        else:
+            self.logger.error("perform drag action failed.")
+            raise SonicRespException(b.err.message)
+
+    def touch_action(self, action: str, x: Union[int, float], y: Union[int, float]):
+        self.check_session_id()
+        if action.lower() not in ('down', 'up', 'move'):
+            raise ValueError("action must be `up`、`down`、`move`")
+        data = {
+            'params': {
+                'x': x,
+                'y': y
+            }
+        }
+        b = self.resp_handler.get_resp(
+            HttpUtil.create_post(
+                self._remote_url + "/session/" + self.session_id + f"/touch/{action}").body(json.dumps(data)))
+        if b.err is None:
+            self.logger.info(f"perform touch action {action} %s.", json.dumps(data))
+        else:
+            self.logger.error(f"perform touch action {action} failed.")
+            raise SonicRespException(b.err.message)
