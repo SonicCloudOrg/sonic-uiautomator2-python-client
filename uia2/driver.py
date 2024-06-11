@@ -69,3 +69,10 @@ class AndroidDriver(object):
     def swipe(self, start_x: Union[int, float], start_y: Union[int, float], end_x: Union[int, float],
               end_y: Union[int, float], duration_ms: Union[int, float]):
         return self._client.swipe(start_x, start_y, end_x, end_y, duration_ms)
+
+    def drag(self, start_x: Union[int, float], start_y: Union[int, float], end_x: Union[int, float],
+             end_y: Union[int, float], duration_ms: Union[int, float], element_id: str, dest_el_id: str):
+        return self._client.drag(start_x, start_y, end_x, end_y, duration_ms, element_id, dest_el_id)
+
+    def touch_action(self, action: str, x: Union[int, float], y: Union[int, float]):
+        return self._client.touch_action(action, x, y)
